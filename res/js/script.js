@@ -1,79 +1,81 @@
-let a = null;
-let b = null;
-let operator = null;
+$(function () {
 
-function parse() {
-    let value = "";
-    if (a !== null) {
-        value += a + " "
-    }
-    if (operator !== null) {
-        value += operator + " "
-    }
-    if (b !== null) {
-        value += b
-    }
+    let number1 = null;
+    let number2 = null;
+    let operator = null;
 
-    let input = document.getElementById('eq');
-    input.value = value;
-}
+    let resetButton = $('#ce');
+    let equalsButton = $('#equals');
+    let resultContainer = $('#result');
+    let inputField = $('#eq');
+    let operatorButtons = $('.operator');
 
-let resetButton = document.getElementById('ce');
-resetButton.addEventListener('click', function () {
-    let input = document.getElementById('eq');
-    let div = document.getElementById('result');
-    div.innerText = "";
-    input.value = "";
-    a = null;
-    b = null;
-    operator = null;
-});
-let equalsButton = document.getElementById('equals');
-equalsButton.addEventListener('click', function () {
-    let div = document.getElementById('result');
-    let result = 0;
-    switch (operator) {
-        case '+':
-            result = a + b;
-            break;
-        case '-':
-            result = a - b;
-            break;
-        case '*':
-            result = a * b;
-            break;
-        case '/':
-            result = a / b;
-            break;
-        case '^':
-            result = Math.pow(a, b);
-            break;
-    }
-    div.innerText = result;
-});
-
-let operatorButtons = document.getElementsByClassName('operator');
-for (let i = 0; i < operatorButtons.length; i++) {
-    let id = operatorButtons[i].id;
-    operatorButtons[i].addEventListener('click', function () {
-        if (a === null) {
-            alert('You have to select a number first');
-            return;
+    function parse() {
+        let value = "";
+        if (number1 !== null) {
+            value += number1 + " "
         }
-        operator = id;
-        parse();
-    })
-}
-
-for (let i = 0; i < 10; i++) {
-    let number = document.getElementById('number-' + i);
-    number.addEventListener('click', function () {
-        if (operator) {
-            b = (b === null) ? i : Number.parseInt(b + "" + i)
-        } else {
-            a = (a === null) ? i : Number.parseInt(a + "" + i)
+        if (operator !== null) {
+            value += operator + " "
         }
-        console.log(a, b)
-        parse()
-    })
-}
+        if (number2 !== null) {
+            value += number2
+        }
+
+        inputField.val(value);
+    }
+
+    resetButton.click(function () {
+        resultContainer.text("");
+        inputField.val("");
+        number1 = null;
+        number2 = null;
+        operator = null;
+    });
+
+    equalsButton.click(function () {
+        let result = (number1 !== null) ? number1 : 0;
+        switch (operator) {
+            case '+':
+                result = number1 + number2;
+                break;
+            case '-':
+                result = number1 - number2;
+                break;
+            case '*':
+                result = number1 * number2;
+                break;
+            case '/':
+                result = number1 / number2;
+                break;
+            case '^':
+                result = Math.pow(number1, number2);
+                break;
+        }
+        resultContainer.text(result);
+    });
+
+
+    for (let operatorButton of operatorButtons) {
+        $(operatorButton).click(function () {
+            if (number1 === null) {
+                alert('You have to select a number first');
+                return;
+            }
+            operator = $(this).attr('id');
+            parse();
+        })
+    }
+
+    for (let i = 0; i < 10; i++) {
+        let number = $('#number-' + i);
+        number.click(function () {
+            if (operator) {
+                number2 = (number2 === null) ? i : Number.parseInt(number2 + "" + i)
+            } else {
+                number1 = (number1 === null) ? i : Number.parseInt(number1 + "" + i)
+            }
+            parse()
+        })
+    }
+});
